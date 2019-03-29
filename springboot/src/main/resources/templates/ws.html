@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Spring Boot + WebSocket + 广播式</title>
+    <script src="../static/sockjs.min.js"></script>
 </head>
 <body onload="disconnect()">
 <noscript><h2 style="color: crimson">你的浏览器不支持websocket</h2></noscript>
@@ -30,6 +31,14 @@
     }
     function connect() {
         var socket = new SockJS('/endpointWisely');
+        stompClient = Stomp.over(socket);
+        stompClient.connect({},function (frame) {
+            setConnected(true);
+            console.log('Connected:'+frame);
+            stompClient.subscribe('',function (response) {
+                showResponse(JSON.parse(response.body).responseMessage);
+            });
+        });
     }
 </script>
 </body>
