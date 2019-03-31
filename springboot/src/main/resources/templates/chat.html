@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <script th:src="@{sockjs.min.js}"></script>
+    <script th:src="@{stomp.min.js}"></script>
+    <script th:src="@{jquery-3.3.1.min.js}"></script>
+</head>
+<body>
+    <p>聊天室</p>
+    <form id="form">
+        <textarea row="4" cols="60" name="text"></textarea>
+        <input type="submit" value="发送消息"/>
+    </form>
+
+    <script th:inline="javascript">
+        $("#form").submit(function (e) {
+            e.preventDefault();
+            var text = $("#form").find('textarea[name="text"]').val();
+            sendSpittle(text);
+        });
+
+        var socket = new SockJS('/endpointWisely');//1 连接sockjs，endpoint为/endpointWisely
+        stompClient = Stomp.over(socket);//2 使用stomp子协议的websocket客户端
+        stompClient.connect("guest","guest",function (frame) {//3 连接服务端
+            stompClient.subscribe('/user/queue/notifications',function (response) {//4 订阅消息
+                $("#output")
+            });
+        });
+    </script>
+</body>
+</html>

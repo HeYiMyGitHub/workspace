@@ -15,10 +15,11 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {//2:注册stomp协议节点，并映射指定的URL
         registry.addEndpoint("/endpointWisely").withSockJS();//3：注册一个stomp的endpoint，并指定使用SockJs协议
+        registry.addEndpoint("/endpointChat").withSockJS();
     }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {//4：配置消息代理
-        registry.enableSimpleBroker("/topic");//5：广播式应配置一个/topic消息代理
+        registry.enableSimpleBroker("/queue","/topic");//5：广播式应配置一个/topic消息代理
     }
 }
