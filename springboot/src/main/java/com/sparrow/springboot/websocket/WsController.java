@@ -3,6 +3,7 @@ package com.sparrow.springboot.websocket;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 public class WsController {
@@ -11,5 +12,10 @@ public class WsController {
     public WiselyRespone say(WiselyMessage message)throws Exception{
         Thread.sleep(3000);
         return new WiselyRespone("欢迎，"+message.getName()+"!");
+    }
+
+    @RequestMapping("/ws")
+    public String welcome(){
+        return "ws";
     }
 }

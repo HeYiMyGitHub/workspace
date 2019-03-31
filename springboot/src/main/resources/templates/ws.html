@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Spring Boot + WebSocket + 广播式</title>
-    <script src="../static/sockjs.min.js"></script>
 </head>
 <body onload="disconnect()">
 <noscript><h2 style="color: crimson">你的浏览器不支持websocket</h2></noscript>
@@ -20,25 +19,40 @@
 </div>
 <script th:src="@{sockjs.min.js}"></script>
 <script th:src="@{stomp.min.js}"></script>
-<script th:src="@{jquery.min.js}"></script>
+<script th:src="@{jquery-3.3.1.min.js}"></script>
 <script type="text/javascript">
     var stompClient = null;
     function setConnected(connected) {
-        $('#connect').disabled = connected;
-        $('#disconnect').disabled = !connected;
-        $('#conversationDiv').style.visibility = connected?'visible':'hidden';
+        document.getElementById("connect").disabled=connected;
+        document.getElementById("disconnect").disabled=!connected;
+        document.getElementById("conversationDiv").style.visibility = connected?'visible':'hidden';
         $('#response').html();
     }
     function connect() {
-        var socket = new SockJS('/endpointWisely');
-        stompClient = Stomp.over(socket);
-        stompClient.connect({},function (frame) {
+        var socket = new SockJS('/endpointWisely');//1 连接sockjs，endpoint为/endpointWisely
+        stompClient = Stomp.over(socket);//2 使用stomp子协议的websocket客户端
+        stompClient.connect({},function (frame) {//3 连接服务端
             setConnected(true);
             console.log('Connected:'+frame);
-            stompClient.subscribe('',function (response) {
+            stompClient.subscribe('/topic/getResponse',function (response) {//4 订阅消息
                 showResponse(JSON.parse(response.body).responseMessage);
             });
         });
+    }
+    function disconnect(){
+        if (stompClient !=null){
+            stompClient.disconnect();
+        }
+        setConnected(false);
+        console.log("Disconnected")
+    }
+    function sendName() {
+        var name = $("#name").val();
+        stompClient.send("/welcome",{},JSON.stringify({'name':name}));//5 向/welcome目标发送消息
+    }
+    function showResponse(message) {
+        var response = $("#response");
+        response.html(message);
     }
 </script>
 </body>

@@ -6,6 +6,9 @@ package com.sparrow.springboot.websocket;
 public class WiselyMessage {
     private String name;
 
+    public WiselyMessage() {
+    }
+
     public WiselyMessage(String name) {
         this.name = name;
     }
