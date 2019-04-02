@@ -21,13 +21,21 @@
             sendSpittle(text);
         });
 
-        var socket = new SockJS('/endpointWisely');//1 连接sockjs，endpoint为/endpointWisely
+        var socket = new SockJS('/endpointChat');//1 连接sockjs，endpoint为/endpointChat
         stompClient = Stomp.over(socket);//2 使用stomp子协议的websocket客户端
-        stompClient.connect("guest","guest",function (frame) {//3 连接服务端
-            stompClient.subscribe('/user/queue/notifications',function (response) {//4 订阅消息
-                $("#output")
+        stompClient.connect("guest","guest",function (frame) {
+            stompClient.subscribe('/user/queue/notifications',function (response) {//2 messagingTemplate.convertAndSendToUser定义的地址一致多一个/user
+                $("#output").append("<b>Received:"+response.body+"</b><br/>");
             });
         });
+        
+        function sendSpittle(text) {
+            stompClient.send("/chat",{},text);//3
+        }
+        $('#stop').click(function () {
+            stompClient.close();
+        });
     </script>
+    <div id="output"></div>
 </body>
 </html>
